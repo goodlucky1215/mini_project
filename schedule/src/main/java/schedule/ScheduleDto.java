@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ScheduleDto {
 	String[] today;
-	String dayOffWorker = "";
+	List dayOffWorker = new ArrayList<>();
 	List morningWorker = new ArrayList<>();
 	List afternoonWorker = new ArrayList<>();
 	

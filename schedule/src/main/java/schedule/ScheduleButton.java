@@ -12,7 +12,7 @@ public class ScheduleButton {
 	String startScheduleDay = "20230219"; //시작날짜 입력받음
 	int[] morningPeople =   {3,2,3,2,3,3,3}; // 월-일 입력 받음
 	int[] afternoonPeople = {2,2,2,2,2,3,3}; // 월-일 입력 받음
-	int[] dayOffPeople = {2,3,2,3,2,1,1}; // 월-일 쉬는 사람
+	int[] dayOffPeople =    {2,3,2,3,2,1,1}; // 월-일 쉬는 사람
 
 	String[] person = {"a","b","c","d","e","f","g"}; //사람이름
 	int numberOfPerson = 7; //전체사람수
@@ -23,6 +23,7 @@ public class ScheduleButton {
 		changeStartWeek(formatterWeek.format(calendar.getTime()).split("/")[3]);//시작요일을 기점으로 순서 변경
 		
 		List<List<ScheduleDto>> monthSchedule = new ArrayList();
+		
 		for(int i=0;i<4;i++) {
 			List<ScheduleDto> weekSchedule = new ArrayList();
 			
@@ -33,25 +34,26 @@ public class ScheduleButton {
 				calendar.add(Calendar.DATE,1);
 				weekSchedule.add(scheduleDto);
 			}
-			//
+			
 			
 			//일주일 시간표 설정
-			boolean[] checkDayOffWorker = new boolean[numberOfPerson];
-			List<IndividualSchduleDto> individualSchduleDto = new ArrayList();
-			for(int j=0;j<numberOfPerson;j++)individualSchduleDto.add(new IndividualSchduleDto());
-			
-			/*
+			int[] work   = {5,5,5,5,5,5,5};
+			int[] dayOff = {2,2,2,2,2,2,2};
+			int[] dayOffPeopleCopy = dayOffPeople;
 			for(int j=0;j<7;j++) {
 				//쉬는 날 설정
-				int dayOffPerson = -1;
-				while(dayOffPerson==-1) {
+				while(weekSchedule.get(j).dayOffWorker.size()<dayOffPeople[j]) {
 					int dayOffWorker = (int) (Math.random() * numberOfPerson);
-					if(!checkDayOffWorker[dayOffWorker]) {
-						checkDayOffWorker[dayOffWorker]= true;
-						weekSchedule.get(j).dayOffWorker = person[dayOffWorker];
-						dayOffPerson = dayOffWorker;
+					if(dayOff[dayOffWorker]>0) {
+						dayOff[dayOffWorker]--;
+						weekSchedule.get(j).dayOffWorker.add(person[dayOffWorker]);
 					}
 				}
+			}
+			//weekSchedulelogTest(weekSchedule);//일주일 쉬는 사람 로그 확인
+			
+		}
+				/*
 				System.out.println("쉬는 사람 "+person[dayOffPerson]);
 				//일할 시간 설정(오전) - 3명
 				boolean[] checkWorker = new boolean[numberOfPerson];
@@ -63,7 +65,8 @@ public class ScheduleButton {
 						individualSchduleDto.get(morningWorker).morningWork++;
 						checkWorker[morningWorker]=true;
 					}
-				}				
+				}		
+				
 				System.out.println("/////////////////");
 				//일할 시간 설정(오후) - 3명
 				while(weekSchedule.get(j).afternoonWorker.size()<3) {
@@ -81,7 +84,6 @@ public class ScheduleButton {
 			//한달 시간표에 넣기
 			monthSchedule.add(weekSchedule);
 			*/
-		}
 		
 	}
 	
@@ -116,10 +118,23 @@ public class ScheduleButton {
 		}
 	}
 	
+	public void weekSchedulelogTest(List<ScheduleDto> weekSchedule) {
+		for(int i=0;i<7;i++) {
+			List dayOffWorker = weekSchedule.get(i).dayOffWorker;
+			for(Object object:dayOffWorker) {
+				System.out.print(object+", ");
+			}
+			System.out.println();
+		}
+		System.out.println("/////////////////////////////");
+	}
+	
 	public static void main(String[] args) throws ParseException {
 		
-		new ScheduleButton().start();
+		for(int i=0;i<1000;i++)
+			new ScheduleButton().start();
 
+		System.out.println("////////end/////////");
 	
 	/*	
 		//test
