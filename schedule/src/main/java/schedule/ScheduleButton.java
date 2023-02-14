@@ -8,41 +8,39 @@ import java.util.Date;
 import java.util.List;
 
 public class ScheduleButton {
+	String[] weekDay = {"월요일","화요일","수요일","목요일","금요일","토요일","일요일"};
+	String startScheduleDay = "20230219"; //시작날짜 입력받음
+	int[] morningPeople =   {3,2,3,2,3,3,3}; // 월-일 입력 받음
+	int[] afternoonPeople = {2,2,2,2,2,3,3}; // 월-일 입력 받음
+	int[] dayOffPeople = {2,3,2,3,2,1,1}; // 월-일 쉬는 사람
 
-	public static void main(String[] args) throws ParseException {
-		System.out.println("");
-		String startScheduleDay = "20230213";
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+	String[] person = {"a","b","c","d","e","f","g"}; //사람이름
+	int numberOfPerson = 7; //전체사람수
+	
+	private void start() throws ParseException {
 		SimpleDateFormat formatterWeek = new SimpleDateFormat("yyyy/MM/dd/E요일");
-		Date date = formatter.parse(startScheduleDay);
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		
-		
-		String[] person = {"a","b","c","d","e","f","g"};
-		int numberOfPerson = 7;
-		//IndividualSchduleDto[] individualSchduleDto = new IndividualSchduleDto[numberOfPerson];
+		Calendar calendar = getCalendar();
+		changeStartWeek(formatterWeek.format(calendar.getTime()).split("/")[3]);//시작요일을 기점으로 순서 변경
 		
 		List<List<ScheduleDto>> monthSchedule = new ArrayList();
 		for(int i=0;i<4;i++) {
 			List<ScheduleDto> weekSchedule = new ArrayList();
+			
 			//일주일 받기
 			for(int j=0;j<7;j++) {
 				ScheduleDto scheduleDto = new ScheduleDto();
-				String todayFormatterString = formatter.format(calendar.getTime());
-				Date todayFormatterDate = formatter.parse(todayFormatterString);
-				scheduleDto.today = formatterWeek.format(todayFormatterDate).split("/");
-				//System.out.println(scheduleDto.today[0]+scheduleDto.today[1]+scheduleDto.today[2]+scheduleDto.today[3]);
+				scheduleDto.today = formatterWeek.format(calendar.getTime()).split("/");
 				calendar.add(Calendar.DATE,1);
 				weekSchedule.add(scheduleDto);
 			}
+			//
 			
 			//일주일 시간표 설정
 			boolean[] checkDayOffWorker = new boolean[numberOfPerson];
 			List<IndividualSchduleDto> individualSchduleDto = new ArrayList();
 			for(int j=0;j<numberOfPerson;j++)individualSchduleDto.add(new IndividualSchduleDto());
 			
-			
+			/*
 			for(int j=0;j<7;j++) {
 				//쉬는 날 설정
 				int dayOffPerson = -1;
@@ -54,37 +52,76 @@ public class ScheduleButton {
 						dayOffPerson = dayOffWorker;
 					}
 				}
-				
+				System.out.println("쉬는 사람 "+person[dayOffPerson]);
 				//일할 시간 설정(오전) - 3명
 				boolean[] checkWorker = new boolean[numberOfPerson];
 				while(weekSchedule.get(j).morningWorker.size()<3) {
 					int morningWorker = (int) (Math.random() * numberOfPerson);
 					if(dayOffPerson!=morningWorker && individualSchduleDto.get(morningWorker).morningWork<3 && !checkWorker[morningWorker]) {
 						weekSchedule.get(j).morningWorker.add(person[morningWorker]);
-						System.out.println(person[morningWorker]);
+						System.out.println("일"+person[morningWorker]);
 						individualSchduleDto.get(morningWorker).morningWork++;
 						checkWorker[morningWorker]=true;
 					}
-					System.out.println(weekSchedule.get(j).morningWorker.size());
 				}				
-				
+				System.out.println("/////////////////");
 				//일할 시간 설정(오후) - 3명
 				while(weekSchedule.get(j).afternoonWorker.size()<3) {
 					int afternoonWork = (int) (Math.random() * numberOfPerson);
 					if(dayOffPerson!=afternoonWork && individualSchduleDto.get(afternoonWork).afternoonWork<3 && !checkWorker[afternoonWork]) {
 						weekSchedule.get(j).afternoonWorker.add(person[afternoonWork]);
+						System.out.println("일"+person[afternoonWork]);
 						individualSchduleDto.get(afternoonWork).afternoonWork++;
 						checkWorker[afternoonWork]=true;
 					}
 				}	
-				
+				System.out.println("/////////////////");
 			}
 			
 			//한달 시간표에 넣기
 			monthSchedule.add(weekSchedule);
+			*/
 		}
 		
+	}
+	
+	public Calendar getCalendar() throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+		Date date = formatter.parse(startScheduleDay);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return calendar;
+	}
+	
+	public void changeStartWeek(String startWeekDay) {
+		int weekNum = 0;
+		for(int i=0;i<7;i++) {
+			if(weekDay[i].equals(startWeekDay)) {
+				weekNum = i;
+				break;
+			}
+		}
+		for(int i=0;i<weekNum;i++) {
+			int morningFirst =   morningPeople[0];
+			int afternoonFirst = afternoonPeople[0];
+			int dayOffFirst = dayOffPeople[0];
+			for(int j=0;j<6;j++) {
+				morningPeople[j]=morningPeople[j+1];
+				afternoonPeople[j]=afternoonPeople[j+1];
+				dayOffPeople[j]=dayOffPeople[j+1];
+			}
+			morningPeople[6]=morningFirst;
+			afternoonPeople[6]=afternoonFirst;
+			dayOffPeople[6]=dayOffFirst;
+		}
+	}
+	
+	public static void main(String[] args) throws ParseException {
 		
+		new ScheduleButton().start();
+
+	
+	/*	
 		//test
 		for(int i=0;i<4;i++) {
 			List<ScheduleDto> weekSchedule = monthSchedule.get(i);
@@ -106,6 +143,7 @@ public class ScheduleButton {
 			System.out.println("//////////////////////////////");
 		}
 		
-		
+		*/
 	}
+
 }
