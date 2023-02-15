@@ -3,6 +3,7 @@ package schedule;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -37,19 +38,40 @@ public class ScheduleButton {
 			
 			
 			//일주일 시간표 설정
-			int[] work   = {5,5,5,5,5,5,5};
-			int[] dayOff = {2,2,2,2,2,2,2};
-			int[] dayOffPeopleCopy = dayOffPeople;
-			for(int j=0;j<7;j++) {
-				//쉬는 날 설정
-				while(weekSchedule.get(j).dayOffWorker.size()<dayOffPeople[j]) {
-					int dayOffWorker = (int) (Math.random() * numberOfPerson);
-					if(dayOff[dayOffWorker]>0) {
-						dayOff[dayOffWorker]--;
-						weekSchedule.get(j).dayOffWorker.add(person[dayOffWorker]);
+			int[] work   = {5,5,5,5,5,5,5}; //한 사람당 일해야하는 양
+			int[] dayOff; //한 사람당 쉬어야하는 양
+			boolean dayOffOverlapPerson = false;
+			List<List> weekScheduleDayOffWorkerList = null;
+			while(!dayOffOverlapPerson) {
+				dayOffOverlapPerson=true;
+				dayOff = new int[]{2,2,2,2,2,2,2};
+				weekScheduleDayOffWorkerList = new ArrayList<>();
+				List weekScheduleDayOffWorker;
+				for(int j=0;j<7;j++) {
+					weekScheduleDayOffWorker = new ArrayList<>();
+					//쉬는 날 설정
+					while(weekScheduleDayOffWorker.size()<dayOffPeople[j]) {
+						int dayOffWorker = (int) (Math.random() * numberOfPerson);
+						if(dayOff[dayOffWorker]>0) {
+							dayOff[dayOffWorker]--;
+							weekScheduleDayOffWorker.add(person[dayOffWorker]);
+						}
 					}
+					int[] personCheck = {0,0,0,0,0,0,0};
+					for(int k=0;k<weekScheduleDayOffWorker.size();k++) {
+						int index = Arrays.asList(person).indexOf(weekScheduleDayOffWorker.get(k));
+						if(personCheck[index]==0) {
+							personCheck[index]++;
+						}else {
+							dayOffOverlapPerson=false;
+							break;
+						}
+					}
+					if(!dayOffOverlapPerson) break;
+					weekScheduleDayOffWorkerList.add(weekScheduleDayOffWorker);
 				}
 			}
+			for(int j=0;j<7;j++) weekSchedule.get(j).dayOffWorker = weekScheduleDayOffWorkerList.get(j);
 			//weekSchedulelogTest(weekSchedule);//일주일 쉬는 사람 로그 확인
 			
 		}
