@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ScheduleButton {
 	String[] weekDay = {"월요일","화요일","수요일","목요일","금요일","토요일","일요일"};
@@ -35,77 +37,27 @@ public class ScheduleButton {
 				calendar.add(Calendar.DATE,1);
 				weekSchedule.add(scheduleDto);
 			}
-			
-			
-			//일주일 시간표 설정
-			int[] work   = {5,5,5,5,5,5,5}; //한 사람당 일해야하는 양
-			int[] dayOff; //한 사람당 쉬어야하는 양
-			boolean dayOffOverlapPerson = false;
-			List<List> weekScheduleDayOffWorkerList = null;
-			while(!dayOffOverlapPerson) {
-				dayOffOverlapPerson=true;
-				dayOff = new int[]{2,2,2,2,2,2,2};
-				weekScheduleDayOffWorkerList = new ArrayList<>();
-				List weekScheduleDayOffWorker;
-				for(int j=0;j<7;j++) {
-					weekScheduleDayOffWorker = new ArrayList<>();
-					//쉬는 날 설정
-					while(weekScheduleDayOffWorker.size()<dayOffPeople[j]) {
-						int dayOffWorker = (int) (Math.random() * numberOfPerson);
-						if(dayOff[dayOffWorker]>0) {
-							dayOff[dayOffWorker]--;
-							weekScheduleDayOffWorker.add(person[dayOffWorker]);
-						}
-					}
-					int[] personCheck = {0,0,0,0,0,0,0};
-					for(int k=0;k<weekScheduleDayOffWorker.size();k++) {
-						int index = Arrays.asList(person).indexOf(weekScheduleDayOffWorker.get(k));
-						if(personCheck[index]==0) {
-							personCheck[index]++;
-						}else {
-							dayOffOverlapPerson=false;
-							break;
-						}
-					}
-					if(!dayOffOverlapPerson) break;
-					weekScheduleDayOffWorkerList.add(weekScheduleDayOffWorker);
-				}
-			}
+		
+			//////////////////일주일 시간표 설정//////////////////////
+			//쉬는날 설정
+			List<List> weekScheduleDayOffWorkerList = getDayOffShedule();
 			for(int j=0;j<7;j++) weekSchedule.get(j).dayOffWorker = weekScheduleDayOffWorkerList.get(j);
-			//weekSchedulelogTest(weekSchedule);//일주일 쉬는 사람 로그 확인
 			
-		}
-				/*
-				System.out.println("쉬는 사람 "+person[dayOffPerson]);
-				//일할 시간 설정(오전) - 3명
-				boolean[] checkWorker = new boolean[numberOfPerson];
-				while(weekSchedule.get(j).morningWorker.size()<3) {
-					int morningWorker = (int) (Math.random() * numberOfPerson);
-					if(dayOffPerson!=morningWorker && individualSchduleDto.get(morningWorker).morningWork<3 && !checkWorker[morningWorker]) {
-						weekSchedule.get(j).morningWorker.add(person[morningWorker]);
-						System.out.println("일"+person[morningWorker]);
-						individualSchduleDto.get(morningWorker).morningWork++;
-						checkWorker[morningWorker]=true;
-					}
-				}		
-				
-				System.out.println("/////////////////");
-				//일할 시간 설정(오후) - 3명
-				while(weekSchedule.get(j).afternoonWorker.size()<3) {
-					int afternoonWork = (int) (Math.random() * numberOfPerson);
-					if(dayOffPerson!=afternoonWork && individualSchduleDto.get(afternoonWork).afternoonWork<3 && !checkWorker[afternoonWork]) {
-						weekSchedule.get(j).afternoonWorker.add(person[afternoonWork]);
-						System.out.println("일"+person[afternoonWork]);
-						individualSchduleDto.get(afternoonWork).afternoonWork++;
-						checkWorker[afternoonWork]=true;
-					}
-				}	
-				System.out.println("/////////////////");
+			//일하는날 설정
+			int[] work   = {5,5,5,5,5,5,5}; //한 사람당 일해야하는 양
+			Map<String, List> weekScheduleWorkWorkerList = getWorkShedule(weekScheduleDayOffWorkerList);
+			List<List> weekScheduleMorningWorkList = weekScheduleWorkWorkerList.get("weekScheduleMorningWork");
+			List<List> weekScheduleAfternoonWorkList = weekScheduleWorkWorkerList.get("weekScheduleAfternoonWork");
+			for(int j=0;j<7;j++) {
+				weekSchedule.get(j).morningWorker = weekScheduleMorningWorkList.get(j);
+				weekSchedule.get(j).afternoonWorker = weekScheduleAfternoonWorkList.get(j);
 			}
 			
-			//한달 시간표에 넣기
+			weekSchedulelogTest(weekSchedule);//일주일 쉬는 사람 로그 확인
+						
+			//한달 시간표에 일주일 시간표 넣기
 			monthSchedule.add(weekSchedule);
-			*/
+		}
 		
 	}
 	
@@ -140,10 +92,112 @@ public class ScheduleButton {
 		}
 	}
 	
+	public List<List> getDayOffShedule() {
+		int[] dayOff; //한 사람당 쉬어야하는 양
+		boolean dayOffOverlapPerson = false;
+		List<List> weekScheduleDayOffWorkerList = null;
+		while(!dayOffOverlapPerson) {
+			dayOffOverlapPerson=true;
+			dayOff = new int[]{2,2,2,2,2,2,2};
+			weekScheduleDayOffWorkerList = new ArrayList<>();
+			List weekScheduleDayOffWorker;
+			for(int j=0;j<7;j++) {
+				weekScheduleDayOffWorker = new ArrayList<>();
+				//쉬는 날 설정
+				while(weekScheduleDayOffWorker.size()<dayOffPeople[j]) {
+					int dayOffWorker = (int) (Math.random() * numberOfPerson);
+					if(dayOff[dayOffWorker]>0) {
+						dayOff[dayOffWorker]--;
+						weekScheduleDayOffWorker.add(person[dayOffWorker]);
+					}
+				}
+				int[] personCheck = {0,0,0,0,0,0,0};
+				for(int k=0;k<weekScheduleDayOffWorker.size();k++) {
+					int index = Arrays.asList(person).indexOf(weekScheduleDayOffWorker.get(k));
+					if(personCheck[index]==0) {
+						personCheck[index]++;
+					}else {
+						dayOffOverlapPerson=false;
+						break;
+					}
+				}
+				if(!dayOffOverlapPerson) break;
+				weekScheduleDayOffWorkerList.add(weekScheduleDayOffWorker);
+			}
+		}
+		return weekScheduleDayOffWorkerList;
+	}
+	
+	public Map getWorkShedule(List<List> weekScheduleDayOffWorkerList) {
+		int[] work; //한 사람당 일해야하는 양
+		boolean overlapPerson = false;
+		List<List> weekScheduleMorningWorkList = null;
+		List<List> weekScheduleAfternoonWorkList = null;
+		while(!overlapPerson) {
+			overlapPerson=true;
+			work = new int[]{5,5,5,5,5,5,5};
+			weekScheduleMorningWorkList = new ArrayList<>();
+			weekScheduleAfternoonWorkList = new ArrayList<>();
+			List weekScheduleMorningWork;
+			List weekScheduleAfternoonWork;
+			for(int j=0;j<7;j++) {
+				boolean[] usePersonCheck = {false, false, false, false, false, false, false};
+				for(int k=0;k<weekScheduleDayOffWorkerList.get(j).size();k++) {
+					int index = Arrays.asList(person).indexOf(weekScheduleDayOffWorkerList.get(j).get(k));
+					usePersonCheck[index] = true;
+				}
+				weekScheduleMorningWork = new ArrayList<>();
+				weekScheduleAfternoonWork = new ArrayList<>();
+				//오전 설정
+				while(weekScheduleMorningWork.size()<morningPeople[j]) {
+					int workWorker = (int) (Math.random() * numberOfPerson);
+					if(!usePersonCheck[workWorker] && work[workWorker]>0) {
+						work[workWorker]--;
+						weekScheduleMorningWork.add(person[workWorker]);
+						usePersonCheck[workWorker] = true;
+					}
+				}
+				
+				//오후 설정
+				for(int k=0;k<7;k++) {
+					if(!usePersonCheck[k] && work[k]>0) {
+						weekScheduleAfternoonWork.add(person[k]);
+						work[k]--;
+						usePersonCheck[k] = true;
+					}
+				}
+				
+				if(weekScheduleAfternoonWork.size()!=afternoonPeople[j]) {
+					overlapPerson=false;
+					break;
+				}
+				weekScheduleMorningWorkList.add(weekScheduleMorningWork);
+				weekScheduleAfternoonWorkList.add(weekScheduleAfternoonWork);
+			}
+		}
+		Map<String, List> weekScheduleWorkWorkerList = new HashMap<>(); //오전, 오후 넣기
+		weekScheduleWorkWorkerList.put("weekScheduleMorningWork",weekScheduleMorningWorkList);
+		weekScheduleWorkWorkerList.put("weekScheduleAfternoonWork",weekScheduleAfternoonWorkList);
+		return weekScheduleWorkWorkerList;
+	}
+	
 	public void weekSchedulelogTest(List<ScheduleDto> weekSchedule) {
 		for(int i=0;i<7;i++) {
+			System.out.println("오늘 날짜  : "+weekSchedule.get(i).today[1]+"/"+
+					   weekSchedule.get(i).today[2]+"/"+ weekSchedule.get(i).today[3]);
 			List dayOffWorker = weekSchedule.get(i).dayOffWorker;
+			List morningWorker = weekSchedule.get(i).morningWorker;
+			List afternoonWorker = weekSchedule.get(i).afternoonWorker;
+			System.out.print("오늘 휴식인 사람 : ");
 			for(Object object:dayOffWorker) {
+				System.out.print(object+", ");
+			}
+			System.out.print("//// 오늘 일하는 오전 사람 : ");
+			for(Object object:morningWorker) {
+				System.out.print(object+", ");
+			}
+			System.out.print("//// 오늘 일하는 오후 사람 : ");
+			for(Object object:afternoonWorker) {
 				System.out.print(object+", ");
 			}
 			System.out.println();
@@ -151,9 +205,10 @@ public class ScheduleButton {
 		System.out.println("/////////////////////////////");
 	}
 	
+	
 	public static void main(String[] args) throws ParseException {
 		
-		for(int i=0;i<1000;i++)
+		//for(int i=0;i<1000;i++)
 			new ScheduleButton().start();
 
 		System.out.println("////////end/////////");
