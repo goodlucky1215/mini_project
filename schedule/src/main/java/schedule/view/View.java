@@ -32,6 +32,22 @@ public class View extends JFrame{
 		dayPanel.add(new JLabel("ex) 20230101"));
 		dayPanel.setToolTipText("ID를 입력하세요");
 		dayPanel.setSize(new Dimension(200,100));
+		
+		JPanel weekPanel =new JPanel();
+		weekPanel.setLayout(new GridLayout(3,7)); 
+		weekPanel.add(new JLabel("월", JLabel.LEFT));
+		weekPanel.add(new JLabel("월", JLabel.LEFT));
+		weekPanel.add(new JLabel("월", JLabel.LEFT));
+		weekPanel.add(new JLabel("월", JLabel.LEFT));
+		weekPanel.add(new JLabel("월", JLabel.LEFT));
+		weekPanel.add(new JLabel("월", JLabel.LEFT));
+		weekPanel.add(new JLabel("월", JLabel.LEFT));
+		weekPanel.add(new JLabel("월", JLabel.LEFT));
+
+		
+		
+		
+
 /*
 		
 		Panel p = new Panel();
@@ -48,6 +64,7 @@ public class View extends JFrame{
 		*/
 		
 		getContentPane().add(dayPanel,"Center");
+		getContentPane().add(weekPanel,"South");
 		// 윈도우창 띄우기
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(800, 800);
