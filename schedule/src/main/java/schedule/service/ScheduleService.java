@@ -1,4 +1,4 @@
-package schedule;
+package schedule.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,17 +10,35 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ScheduleButton {
+import schedule.dto.ScheduleDto;
+
+public class ScheduleService {
 	String[] weekDay = {"월요일","화요일","수요일","목요일","금요일","토요일","일요일"};
-	String startScheduleDay = "20230219"; //시작날짜 입력받음
-	int[] morningPeople =   {3,2,3,2,3,3,3}; // 월-일 입력 받음
-	int[] afternoonPeople = {2,2,2,2,2,3,3}; // 월-일 입력 받음
-	int[] dayOffPeople =    {2,3,2,3,2,1,1}; // 월-일 쉬는 사람
+	//String startScheduleDay = "20230219"; //시작날짜 입력받음
+	String startScheduleDay; //시작날짜 입력받음
+	//int[] morningPeople =   {3,2,3,2,3,3,3}; // 월-일 입력 받음
+	int[] morningPeople; // 월-일 입력 받음
+	//int[] afternoonPeople = {2,2,2,2,2,3,3}; // 월-일 입력 받음
+	int[] afternoonPeople; // 월-일 입력 받음
+	//int[] dayOffPeople =    {2,3,2,3,2,1,1}; // 월-일 쉬는 사람
+	int[] dayOffPeople; // 월-일 쉬는 사람
 
 	String[] person = {"a","b","c","d","e","f","g"}; //사람이름
 	int numberOfPerson = 7; //전체사람수
 	
-	private void start() throws ParseException {
+	public void makeSchedule(String startScheduleDay, String[][] scheduleData) throws ParseException {
+		this.startScheduleDay = startScheduleDay;
+		morningPeople = new int[7];
+		afternoonPeople = new int[7];
+		dayOffPeople = new int[7];
+		for(int i=0;i<7;i++) morningPeople[i] = Integer.valueOf(scheduleData[0][i]);
+		for(int i=0;i<7;i++) afternoonPeople[i] = Integer.valueOf(scheduleData[1][i]);
+		for(int i=0;i<7;i++) dayOffPeople[i] = Integer.valueOf(scheduleData[2][i]);
+		start();
+	}
+	
+	
+	public void start() throws ParseException {
 		SimpleDateFormat formatterWeek = new SimpleDateFormat("yyyy/MM/dd/E요일");
 		Calendar calendar = getCalendar();
 		changeStartWeek(formatterWeek.format(calendar.getTime()).split("/")[3]);//시작요일을 기점으로 순서 변경
@@ -204,15 +222,8 @@ public class ScheduleButton {
 		}
 		System.out.println("/////////////////////////////");
 	}
-	
-	
-	public static void main(String[] args) throws ParseException {
 		
-		//for(int i=0;i<1000;i++)
-			new ScheduleButton().start();
 
-		System.out.println("////////end/////////");
-	
 	/*	
 		//test
 		for(int i=0;i<4;i++) {
@@ -236,6 +247,5 @@ public class ScheduleButton {
 		}
 		
 		*/
-	}
 
 }
