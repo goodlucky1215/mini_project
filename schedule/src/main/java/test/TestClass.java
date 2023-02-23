@@ -159,7 +159,7 @@ public class TestClass {
 				xssfCell.setCellStyle(cellStyle_Table_Center);
 				xssfCell.setCellValue("테이블 셀9");
 				
-				String localFile = "다운로드\\" + "테스트_엑셀" + ".xlsx";
+				String localFile = "C:\\Users\\ariel\\Downloads\\" + "테스트_엑셀" + ".xlsx";
 				
 				File file = new File(localFile);
 				FileOutputStream fos = null;
@@ -168,12 +168,13 @@ public class TestClass {
 
 				if (xssfWb != null)	xssfWb.close();
 				if (fos != null) fos.close();
+				System.out.println("이건 완료야");
 				
 				//ctx.put("FILENAME", "입고상세출력_"+ mapList.get(0).get("PRINT_DATE"));
 				//if(file != null) file.deleteOnExit();
 				}
 				catch(Exception e){
-		        	
+					System.out.println(e);
 				}finally{
 					
 			    }
