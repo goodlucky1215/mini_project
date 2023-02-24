@@ -93,18 +93,15 @@ public class ScheduleService {
 			weekSchedulelogTest(weekSchedule);//일주일 쉬는 사람 로그 확인
 						
 			//한달 시간표에 일주일 시간표 넣기
-			monthSchedule.add(weekSchedule);
-			
-			excelMake();
-			
-			
+			monthSchedule.add(weekSchedule);			
 		}
+		excelMake();
 		
 	}
 	
 	private void excelMake() {
-		for(int i=0;i<4;i++) {
-			List<ScheduleDto> weekSchedule = monthSchedule.get(i);
+		
+		for(int i=0;i<1;i++) {
 			//.xls 확장자 지원
 			HSSFWorkbook wb = null;
 			HSSFSheet sheet = null;
@@ -132,11 +129,11 @@ public class ScheduleService {
 				//테이블 타이틀 스타일
 				CellStyle cellStyle_Title = xssfWb.createCellStyle();
 				
-				xssfSheet.setColumnWidth(3, (xssfSheet.getColumnWidth(3))+(short)2048); // 3번째 컬럼 넓이 조절
-				xssfSheet.setColumnWidth(4, (xssfSheet.getColumnWidth(4))+(short)2048); // 4번째 컬럼 넓이 조절
-				xssfSheet.setColumnWidth(5, (xssfSheet.getColumnWidth(5))+(short)2048); // 5번째 컬럼 넓이 조절
+				//xssfSheet.setColumnWidth(3, (xssfSheet.getColumnWidth(3))+(short)2048); // 3번째 컬럼 넓이 조절
+				//xssfSheet.setColumnWidth(4, (xssfSheet.getColumnWidth(4))+(short)2048); // 4번째 컬럼 넓이 조절
+				//xssfSheet.setColumnWidth(5, (xssfSheet.getColumnWidth(5))+(short)2048); // 5번째 컬럼 넓이 조절
 				
-				xssfSheet.setColumnWidth(8, (xssfSheet.getColumnWidth(8))+(short)4096); // 8번째 컬럼 넓이 조절
+				//xssfSheet.setColumnWidth(8, (xssfSheet.getColumnWidth(8))+(short)4096); // 8번째 컬럼 넓이 조절
 				
 				cellStyle_Title.setFont(font); // cellStle에 font를 적용
 				cellStyle_Title.setAlignment(HorizontalAlignment.CENTER); // 정렬
@@ -147,44 +144,49 @@ public class ScheduleService {
 				xssfRow = xssfSheet.createRow(rowNo++); //행 객체 추가
 				xssfCell = xssfRow.createCell((short) 0); // 추가한 행에 셀 객체 추가
 				xssfCell.setCellStyle(cellStyle_Title); // 셀에 스타일 지정
-				xssfCell.setCellValue("타이틀 입니다."); // 데이터 입력
-				
-				xssfRow = xssfSheet.createRow(rowNo++);  // 빈행 추가
+				xssfCell.setCellValue("Schedule"); // 데이터 입력
 				
 				CellStyle cellStyle_Body = xssfWb.createCellStyle(); 
 				cellStyle_Body.setAlignment(HorizontalAlignment.LEFT); 
 				
+				xssfRow = xssfSheet.createRow(rowNo++);  // 요일 추가
+				for(int col=1;col<8;col++) {
+					XSSFCell dayOftheWeekRow = xssfRow.createCell((short) col);
+					dayOftheWeekRow.setCellStyle(cellStyle_Body);
+					dayOftheWeekRow.setCellValue(weekDay[col-1]);
+				}
+				
 				//헤더 생성
 				xssfSheet.addMergedRegion(new CellRangeAddress(rowNo, rowNo, 0, 1)); //첫행,마지막행,첫열,마지막열
-				xssfRow = xssfSheet.createRow(rowNo++); //헤더 01
-				xssfCell = xssfRow.createCell((short) 0);
-				xssfCell.setCellStyle(cellStyle_Body);
-				xssfCell.setCellValue("헤더01 셀01");
-				xssfCell = xssfRow.createCell((short) 8);
-				xssfCell.setCellStyle(cellStyle_Body);
-				xssfCell.setCellValue("헤더01 셀08");
-				xssfRow = xssfSheet.createRow(rowNo++); //헤더 02
-				xssfCell = xssfRow.createCell((short) 0);
-				xssfCell.setCellStyle(cellStyle_Body);
-				xssfCell.setCellValue("헤더02 셀01");
-				xssfCell = xssfRow.createCell((short) 8);
-				xssfCell.setCellStyle(cellStyle_Body);
-				xssfCell.setCellValue("헤더02 셀08");
-				xssfRow = xssfSheet.createRow(rowNo++); //헤더 03
-				xssfCell = xssfRow.createCell((short) 0);
-				xssfCell.setCellStyle(cellStyle_Body);
-				xssfCell.setCellValue("헤더03 셀01");
-				xssfCell = xssfRow.createCell((short) 8);
-				xssfCell.setCellStyle(cellStyle_Body);
-				xssfCell.setCellValue("헤더03 셀08");
-				xssfRow = xssfSheet.createRow(rowNo++); //헤더 04
-				xssfCell = xssfRow.createCell((short) 0);
-				xssfCell.setCellStyle(cellStyle_Body);
-				xssfCell.setCellValue("헤더04 셀01");
-				xssfCell = xssfRow.createCell((short) 8);
-				xssfCell.setCellStyle(cellStyle_Body);
-				xssfCell.setCellValue("헤더04 셀08");
-				
+				for(int oneWeek=0;oneWeek<4;oneWeek++) {
+					xssfRow = xssfSheet.createRow(rowNo++);  // 요일 추가
+					XSSFCell dayRow = xssfRow.createCell((short) 0);
+					dayRow.setCellStyle(cellStyle_Body);
+					XSSFRow xssfRowMorning = xssfSheet.createRow(rowNo++); //오전
+					XSSFRow xssfRowAfternoon = xssfSheet.createRow(rowNo++); //오후
+					XSSFRow xssfRowDayoff = xssfSheet.createRow(rowNo++); //쉬는날
+					XSSFCell xssfCellMorning = xssfRowMorning.createCell((short) 0);
+					xssfCellMorning.setCellStyle(cellStyle_Body);
+					xssfCellMorning.setCellValue("오전");
+					XSSFCell xssfCellAfternoon = xssfRowAfternoon.createCell((short) 0);
+					xssfCellAfternoon.setCellStyle(cellStyle_Body);
+					xssfCellAfternoon.setCellValue("오후");
+					XSSFCell xssfCellDayoff = xssfRowDayoff.createCell((short) 0);
+					xssfCellDayoff.setCellStyle(cellStyle_Body);
+					xssfCellDayoff.setCellValue("쉬는 날");
+					for(int oneDayCol=0,col=1;oneDayCol<7;oneDayCol++,col++) {
+						dayRow = xssfRow.createCell((short) col);
+						dayRow.setCellValue(getTodayCol(monthSchedule.get(oneWeek).get(oneDayCol).today));
+						xssfCellMorning = xssfRowMorning.createCell((short) col);
+						xssfCellMorning.setCellValue(monthSchedule.get(oneWeek).get(oneDayCol).morningWorker.toString());
+						xssfCellAfternoon = xssfRowAfternoon.createCell((short) col);
+						xssfCellAfternoon.setCellValue(monthSchedule.get(oneWeek).get(oneDayCol).afternoonWorker.toString());
+						xssfCellDayoff = xssfRowDayoff.createCell((short) col);
+						xssfCellDayoff.setCellValue(monthSchedule.get(oneWeek).get(oneDayCol).dayOffWorker.toString());						
+					}
+					
+				}
+
 				//테이블 스타일 설정
 				CellStyle cellStyle_Table_Center = xssfWb.createCellStyle();
 				cellStyle_Table_Center.setBorderTop(BorderStyle.THIN); //테두리 위쪽
@@ -193,36 +195,7 @@ public class ScheduleService {
 				cellStyle_Table_Center.setBorderRight(BorderStyle.THIN); //테두리 오른쪽
 				cellStyle_Table_Center.setAlignment(HorizontalAlignment.CENTER);
 				
-				xssfRow = xssfSheet.createRow(rowNo++);
-				xssfCell = xssfRow.createCell((short) 0);
-				xssfCell.setCellStyle(cellStyle_Table_Center);
-				xssfCell.setCellValue("테이블 셀1");
-				xssfCell = xssfRow.createCell((short) 1);
-				xssfCell.setCellStyle(cellStyle_Table_Center);
-				xssfCell.setCellValue("테이블 셀2");
-				xssfCell = xssfRow.createCell((short) 2);
-				xssfCell.setCellStyle(cellStyle_Table_Center);
-				xssfCell.setCellValue("테이블 셀3");
-				xssfCell = xssfRow.createCell((short) 3);
-				xssfCell.setCellStyle(cellStyle_Table_Center);
-				xssfCell.setCellValue("테이블 셀4");
-				xssfCell = xssfRow.createCell((short) 4);
-				xssfCell.setCellStyle(cellStyle_Table_Center);
-				xssfCell.setCellValue("테이블 셀5");
-				xssfCell = xssfRow.createCell((short) 5);
-				xssfCell.setCellStyle(cellStyle_Table_Center);
-				xssfCell.setCellValue("테이블 셀6");
-				xssfCell = xssfRow.createCell((short) 6);
-				xssfCell.setCellStyle(cellStyle_Table_Center);
-				xssfCell.setCellValue("테이블 셀7");
-				xssfCell = xssfRow.createCell((short) 7);
-				xssfCell.setCellStyle(cellStyle_Table_Center);
-				xssfCell.setCellValue("테이블 셀8");
-				xssfCell = xssfRow.createCell((short) 8);
-				xssfCell.setCellStyle(cellStyle_Table_Center);
-				xssfCell.setCellValue("테이블 셀9");
-				
-				String localFile = "다운로드\\" + "테스트_엑셀" + ".xlsx";
+				String localFile = "C:\\Users\\ariel\\Downloads\\" + "테스트_엑셀" + ".xlsx";
 				
 				File file = new File(localFile);
 				FileOutputStream fos = null;
@@ -231,16 +204,21 @@ public class ScheduleService {
 
 				if (xssfWb != null)	xssfWb.close();
 				if (fos != null) fos.close();
-				
-				//ctx.put("FILENAME", "입고상세출력_"+ mapList.get(0).get("PRINT_DATE"));
-				//if(file != null) file.deleteOnExit();
+				System.out.println("이건 완료야");
+
 				}
 				catch(Exception e){
-		        	
+					System.out.println(e);
 				}finally{
 					
 			    }
 		}
+	}
+
+
+	private String getTodayCol(String[] today) {
+		System.out.println(today[0]+"-"+today[1]+"-"+today[2]);
+		return today[0]+"-"+today[1]+"-"+today[2];
 	}
 
 
@@ -261,14 +239,17 @@ public class ScheduleService {
 			}
 		}
 		for(int i=0;i<weekNum;i++) {
+			String weekDayFirst =   weekDay[0];
 			int morningFirst =   morningPeople[0];
 			int afternoonFirst = afternoonPeople[0];
 			int dayOffFirst = dayOffPeople[0];
 			for(int j=0;j<6;j++) {
+				weekDay[j]=weekDay[j+1];
 				morningPeople[j]=morningPeople[j+1];
 				afternoonPeople[j]=afternoonPeople[j+1];
 				dayOffPeople[j]=dayOffPeople[j+1];
 			}
+			weekDay[6]=weekDayFirst;
 			morningPeople[6]=morningFirst;
 			afternoonPeople[6]=afternoonFirst;
 			dayOffPeople[6]=dayOffFirst;
