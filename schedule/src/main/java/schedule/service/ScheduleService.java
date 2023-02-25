@@ -42,7 +42,7 @@ public class ScheduleService {
 
 	List<List<ScheduleDto>> monthSchedule;
 	
-	String[] person = {"a","b","c","d","e","f","g"}; //사람이름
+	String[] person = {"아리엘","렐라","엘사","벨","백설이","안나","자스민"}; //사람이름
 	int numberOfPerson = 7; //전체사람수
 	
 	public void makeSchedule(String startScheduleDay, String[][] scheduleData) throws ParseException {
@@ -128,13 +128,6 @@ public class ScheduleService {
 				
 				//테이블 타이틀 스타일
 				CellStyle cellStyle_Title = xssfWb.createCellStyle();
-				
-				//xssfSheet.setColumnWidth(3, (xssfSheet.getColumnWidth(3))+(short)2048); // 3번째 컬럼 넓이 조절
-				//xssfSheet.setColumnWidth(4, (xssfSheet.getColumnWidth(4))+(short)2048); // 4번째 컬럼 넓이 조절
-				//xssfSheet.setColumnWidth(5, (xssfSheet.getColumnWidth(5))+(short)2048); // 5번째 컬럼 넓이 조절
-				
-				//xssfSheet.setColumnWidth(8, (xssfSheet.getColumnWidth(8))+(short)4096); // 8번째 컬럼 넓이 조절
-				
 				cellStyle_Title.setFont(font); // cellStle에 font를 적용
 				cellStyle_Title.setAlignment(HorizontalAlignment.CENTER); // 정렬
 				
@@ -151,20 +144,21 @@ public class ScheduleService {
 				
 				xssfRow = xssfSheet.createRow(rowNo++);  // 요일 추가
 				for(int col=1;col<8;col++) {
+					xssfSheet.setColumnWidth(col, (xssfSheet.getColumnWidth(col))+(short)2048);
 					XSSFCell dayOftheWeekRow = xssfRow.createCell((short) col);
 					dayOftheWeekRow.setCellStyle(cellStyle_Body);
 					dayOftheWeekRow.setCellValue(weekDay[col-1]);
 				}
 				
-				//헤더 생성
-				xssfSheet.addMergedRegion(new CellRangeAddress(rowNo, rowNo, 0, 1)); //첫행,마지막행,첫열,마지막열
 				for(int oneWeek=0;oneWeek<4;oneWeek++) {
-					xssfRow = xssfSheet.createRow(rowNo++);  // 요일 추가
-					XSSFCell dayRow = xssfRow.createCell((short) 0);
-					dayRow.setCellStyle(cellStyle_Body);
+					XSSFRow xssfRowDay = xssfSheet.createRow(rowNo++);  // 요일 추가
 					XSSFRow xssfRowMorning = xssfSheet.createRow(rowNo++); //오전
 					XSSFRow xssfRowAfternoon = xssfSheet.createRow(rowNo++); //오후
 					XSSFRow xssfRowDayoff = xssfSheet.createRow(rowNo++); //쉬는날
+					
+					XSSFCell xssfCellDayRow = xssfRowDay.createCell((short) 0);
+					xssfCellDayRow.setCellStyle(cellStyle_Body);
+					xssfCellDayRow.setCellValue("");
 					XSSFCell xssfCellMorning = xssfRowMorning.createCell((short) 0);
 					xssfCellMorning.setCellStyle(cellStyle_Body);
 					xssfCellMorning.setCellValue("오전");
@@ -174,13 +168,14 @@ public class ScheduleService {
 					XSSFCell xssfCellDayoff = xssfRowDayoff.createCell((short) 0);
 					xssfCellDayoff.setCellStyle(cellStyle_Body);
 					xssfCellDayoff.setCellValue("쉬는 날");
+					
 					for(int oneDayCol=0,col=1;oneDayCol<7;oneDayCol++,col++) {
-						dayRow = xssfRow.createCell((short) col);
-						dayRow.setCellValue(getTodayCol(monthSchedule.get(oneWeek).get(oneDayCol).today));
 						xssfCellMorning = xssfRowMorning.createCell((short) col);
 						xssfCellMorning.setCellValue(monthSchedule.get(oneWeek).get(oneDayCol).morningWorker.toString());
 						xssfCellAfternoon = xssfRowAfternoon.createCell((short) col);
 						xssfCellAfternoon.setCellValue(monthSchedule.get(oneWeek).get(oneDayCol).afternoonWorker.toString());
+						xssfCellDayRow = xssfRowDay.createCell((short) col);
+						xssfCellDayRow.setCellValue(getTodayCol(monthSchedule.get(oneWeek).get(oneDayCol).today));
 						xssfCellDayoff = xssfRowDayoff.createCell((short) col);
 						xssfCellDayoff.setCellValue(monthSchedule.get(oneWeek).get(oneDayCol).dayOffWorker.toString());						
 					}
@@ -217,7 +212,6 @@ public class ScheduleService {
 
 
 	private String getTodayCol(String[] today) {
-		System.out.println(today[0]+"-"+today[1]+"-"+today[2]);
 		return today[0]+"-"+today[1]+"-"+today[2];
 	}
 
