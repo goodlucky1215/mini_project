@@ -1,9 +1,12 @@
 package schedule.view;
 
 import java.awt.Button;
+import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridLayout;
+import java.awt.Label;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -88,37 +91,6 @@ public class View extends JFrame{
                 	try {
 						new SheduleController().makeShedule(day.getText(),getscheduleData());
 					} catch (ParseException e) {
-						/*
-						 //parent Frame을 f로 하고, modal을 true로 해서 필수 응답 dialog로 함.
-
-			             Dialog info = new Dialog(f, "Information", true);
-			
-			             info.setSize(140,90);
-			
-			             //parent Frame이 아닌, 화면이 위치의 기준이 된다.
-			
-			             info.setLocation(50,50);
-			
-			             info.setLayout(new FlowLayout());
-			
-			            
-			
-			             Label msg = new Label("This is modal Dialog", Label.CENTER);
-			
-			             Button ok = new Button("OK");
-			
-			             info.add(msg);
-			
-			             info.add(ok);
-			
-			            
-			
-			             f.setVisible(true);
-			
-			             //Dialog를 화면에 보이게 한다.
-			
-			             info.setVisible(true);
-						 * */
 						e.printStackTrace();
 					}
                 }
